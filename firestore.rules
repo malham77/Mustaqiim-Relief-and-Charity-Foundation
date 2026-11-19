@@ -1,0 +1,479 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // Global Helpers
+    // -----------------------------------------------------------------
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isBootstrappedAdmin() {
+      return isVerifiedUser() && request.auth.token.email == 'maleham06@gmail.com';
+    }
+
+    function isAdmin() {
+      return isBootstrappedAdmin() || (
+        isVerifiedUser() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isNonEmptyStr(val, maxLen) {
+      return val is string && val.size() >= 1 && val.size() <= maxLen;
+    }
+
+    function isOptStr(val, maxLen) {
+      return val is string && val.size() <= maxLen;
+    }
+
+    // -----------------------------------------------------------------
+    // Validation Blueprints
+    // -----------------------------------------------------------------
+    function isValidSiteSettings(data) {
+      return data.keys().hasAll([
+        'organisation_name', 'phone_display', 'phone_international', 'map_label', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'organisation_name', 'tagline', 'registration_number', 'legal_status',
+        'operational_hours', 'address_line', 'phone_display', 'phone_international',
+        'whatsapp_message', 'public_email', 'facebook_url', 'instagram_url',
+        'map_lat', 'map_lng', 'map_label', 'map_description', 'announcement_text',
+        'footer_mission', 'commitment_quote', 'commitment_author', 'commitment_role',
+        'updatedAt'
+      ]) &&
+      isNonEmptyStr(data.organisation_name, 160) &&
+      isNonEmptyStr(data.phone_display, 40) &&
+      data.phone_international is string && data.phone_international.matches('^[0-9]{7,20}$') &&
+      isNonEmptyStr(data.map_label, 160) &&
+      (!('tagline' in data) || isOptStr(data.tagline, 240)) &&
+      (!('registration_number' in data) || isOptStr(data.registration_number, 120)) &&
+      (!('legal_status' in data) || isOptStr(data.legal_status, 160)) &&
+      (!('operational_hours' in data) || isOptStr(data.operational_hours, 160)) &&
+      (!('address_line' in data) || isOptStr(data.address_line, 240)) &&
+      (!('whatsapp_message' in data) || isOptStr(data.whatsapp_message, 300)) &&
+      (!('public_email' in data) || isOptStr(data.public_email, 160)) &&
+      (!('facebook_url' in data) || isOptStr(data.facebook_url, 300)) &&
+      (!('instagram_url' in data) || isOptStr(data.instagram_url, 300)) &&
+      (!('map_lat' in data) || (data.map_lat is number && data.map_lat >= -90 && data.map_lat <= 90)) &&
+      (!('map_lng' in data) || (data.map_lng is number && data.map_lng >= -180 && data.map_lng <= 180)) &&
+      (!('map_description' in data) || isOptStr(data.map_description, 300)) &&
+      (!('announcement_text' in data) || isOptStr(data.announcement_text, 240)) &&
+      (!('footer_mission' in data) || isOptStr(data.footer_mission, 400)) &&
+      (!('commitment_quote' in data) || isOptStr(data.commitment_quote, 500)) &&
+      (!('commitment_author' in data) || isOptStr(data.commitment_author, 160)) &&
+      (!('commitment_role' in data) || isOptStr(data.commitment_role, 160)) &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidLegalSettings(data) {
+      return data.keys().hasAll([
+        'privacy_updated', 'terms_updated', 'refund_updated', 'cookie_updated', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'privacy_updated', 'terms_updated', 'refund_updated', 'cookie_updated',
+        'donation_policy_updated', 'data_deletion_updated', 'privacy_contact_note', 'updatedAt'
+      ]) &&
+      isNonEmptyStr(data.privacy_updated, 80) &&
+      isNonEmptyStr(data.terms_updated, 80) &&
+      isNonEmptyStr(data.refund_updated, 80) &&
+      isNonEmptyStr(data.cookie_updated, 80) &&
+      (!('donation_policy_updated' in data) || isOptStr(data.donation_policy_updated, 80)) &&
+      (!('data_deletion_updated' in data) || isOptStr(data.data_deletion_updated, 80)) &&
+      (!('privacy_contact_note' in data) || isOptStr(data.privacy_contact_note, 400)) &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidImpactStats(data) {
+      return data.keys().hasAll(['section_note', 'items', 'updatedAt']) &&
+      data.keys().hasOnly(['section_note', 'items', 'updatedAt']) &&
+      isOptStr(data.section_note, 300) &&
+      data.items is list && data.items.size() <= 6 &&
+      (data.items.size() == 0 || data.items[0] is map) &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidSiteImages(data) {
+      return data.keys().hasAll([
+        'about_side_image_url', 'child_support_bg_url', 'qurbani_promo_bg_url',
+        'quote_bg_url', 'cta_bg_url', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'about_side_image_url', 'about_side_image_alt',
+        'child_support_bg_url', 'child_support_bg_alt',
+        'child_support_card1_url', 'child_support_card1_alt',
+        'child_support_card2_url', 'child_support_card2_alt',
+        'qurbani_promo_bg_url', 'qurbani_promo_bg_alt',
+        'qurbani_promo_feature_url', 'qurbani_promo_feature_alt',
+        'quote_bg_url', 'quote_bg_alt',
+        'cta_bg_url', 'cta_bg_alt',
+        'inner_hero_about_url', 'inner_hero_about_alt',
+        'inner_hero_qurbani_url', 'inner_hero_qurbani_alt',
+        'inner_hero_donate_url', 'inner_hero_donate_alt',
+        'updatedAt'
+      ]) &&
+      isNonEmptyStr(data.about_side_image_url, 500) &&
+      (!('about_side_image_alt' in data) || isOptStr(data.about_side_image_alt, 240)) &&
+      isNonEmptyStr(data.child_support_bg_url, 500) &&
+      (!('child_support_bg_alt' in data) || isOptStr(data.child_support_bg_alt, 240)) &&
+      (!('child_support_card1_url' in data) || isOptStr(data.child_support_card1_url, 500)) &&
+      (!('child_support_card1_alt' in data) || isOptStr(data.child_support_card1_alt, 240)) &&
+      (!('child_support_card2_url' in data) || isOptStr(data.child_support_card2_url, 500)) &&
+      (!('child_support_card2_alt' in data) || isOptStr(data.child_support_card2_alt, 240)) &&
+      isNonEmptyStr(data.qurbani_promo_bg_url, 500) &&
+      (!('qurbani_promo_bg_alt' in data) || isOptStr(data.qurbani_promo_bg_alt, 240)) &&
+      (!('qurbani_promo_feature_url' in data) || isOptStr(data.qurbani_promo_feature_url, 500)) &&
+      (!('qurbani_promo_feature_alt' in data) || isOptStr(data.qurbani_promo_feature_alt, 240)) &&
+      isNonEmptyStr(data.quote_bg_url, 500) &&
+      (!('quote_bg_alt' in data) || isOptStr(data.quote_bg_alt, 240)) &&
+      isNonEmptyStr(data.cta_bg_url, 500) &&
+      (!('cta_bg_alt' in data) || isOptStr(data.cta_bg_alt, 240)) &&
+      (!('inner_hero_about_url' in data) || isOptStr(data.inner_hero_about_url, 500)) &&
+      (!('inner_hero_about_alt' in data) || isOptStr(data.inner_hero_about_alt, 240)) &&
+      (!('inner_hero_qurbani_url' in data) || isOptStr(data.inner_hero_qurbani_url, 500)) &&
+      (!('inner_hero_qurbani_alt' in data) || isOptStr(data.inner_hero_qurbani_alt, 240)) &&
+      (!('inner_hero_donate_url' in data) || isOptStr(data.inner_hero_donate_url, 500)) &&
+      (!('inner_hero_donate_alt' in data) || isOptStr(data.inner_hero_donate_alt, 240)) &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidHeroSlide(data) {
+      return data.keys().hasAll([
+        'title', 'subtitle', 'image_url', 'image_alt', 'order', 'active', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'eyebrow', 'title', 'subtitle', 'primary_cta_label', 'primary_cta_href',
+        'secondary_cta_label', 'secondary_cta_href', 'image_url', 'image_alt',
+        'order', 'active', 'updatedAt'
+      ]) &&
+      (!('eyebrow' in data) || isOptStr(data.eyebrow, 100)) &&
+      isNonEmptyStr(data.title, 160) &&
+      isOptStr(data.subtitle, 400) &&
+      (!('primary_cta_label' in data) || isOptStr(data.primary_cta_label, 60)) &&
+      (!('primary_cta_href' in data) || isOptStr(data.primary_cta_href, 200)) &&
+      (!('secondary_cta_label' in data) || isOptStr(data.secondary_cta_label, 60)) &&
+      (!('secondary_cta_href' in data) || isOptStr(data.secondary_cta_href, 200)) &&
+      isNonEmptyStr(data.image_url, 500) &&
+      isNonEmptyStr(data.image_alt, 240) &&
+      data.order is number && data.order >= 0 && data.order <= 1000 &&
+      data.active is bool &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidCampaign(data) {
+      return data.keys().hasAll([
+        'slug', 'title', 'summary', 'description', 'target_amount', 'raised_amount',
+        'currency', 'location', 'active', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'slug', 'title', 'summary', 'description', 'image_url', 'image_alt',
+        'target_amount', 'raised_amount', 'currency', 'location', 'active', 'order', 'updatedAt'
+      ]) &&
+      data.slug is string && data.slug.size() >= 2 && data.slug.size() <= 100 && data.slug.matches('^[a-z0-9-]+$') &&
+      isNonEmptyStr(data.title, 160) &&
+      isOptStr(data.summary, 400) &&
+      isOptStr(data.description, 4000) &&
+      (!('image_url' in data) || isOptStr(data.image_url, 500)) &&
+      (!('image_alt' in data) || isOptStr(data.image_alt, 240)) &&
+      data.target_amount is number && data.target_amount >= 0 &&
+      data.raised_amount is number && data.raised_amount >= 0 &&
+      isNonEmptyStr(data.currency, 10) &&
+      isNonEmptyStr(data.location, 120) &&
+      data.active is bool &&
+      (!('order' in data) || (data.order is number && data.order >= 0 && data.order <= 1000)) &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidStory(data) {
+      return data.keys().hasAll([
+        'slug', 'title', 'excerpt', 'body', 'published_at', 'active', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'slug', 'title', 'excerpt', 'body', 'image_url', 'image_alt',
+        'published_at', 'active', 'updatedAt'
+      ]) &&
+      data.slug is string && data.slug.size() >= 2 && data.slug.size() <= 100 && data.slug.matches('^[a-z0-9-]+$') &&
+      isNonEmptyStr(data.title, 180) &&
+      isOptStr(data.excerpt, 400) &&
+      isOptStr(data.body, 8000) &&
+      (!('image_url' in data) || isOptStr(data.image_url, 500)) &&
+      (!('image_alt' in data) || isOptStr(data.image_alt, 240)) &&
+      isNonEmptyStr(data.published_at, 60) &&
+      data.active is bool &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidMediaItem(data) {
+      return data.keys().hasAll([
+        'slug', 'title', 'media_type', 'image_alt', 'active', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'slug', 'title', 'caption', 'media_type', 'image_url', 'video_url',
+        'image_alt', 'license_note', 'featured', 'order', 'active', 'updatedAt'
+      ]) &&
+      data.slug is string && data.slug.size() >= 2 && data.slug.size() <= 100 && data.slug.matches('^[a-z0-9-]+$') &&
+      isNonEmptyStr(data.title, 160) &&
+      (!('caption' in data) || isOptStr(data.caption, 400)) &&
+      data.media_type in ['photo', 'video'] &&
+      (!('image_url' in data) || isOptStr(data.image_url, 500)) &&
+      (!('video_url' in data) || isOptStr(data.video_url, 500)) &&
+      isNonEmptyStr(data.image_alt, 240) &&
+      (!('license_note' in data) || isOptStr(data.license_note, 240)) &&
+      (!('featured' in data) || data.featured is bool) &&
+      (!('order' in data) || (data.order is number && data.order >= 0 && data.order <= 1000)) &&
+      data.active is bool &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidQurbaniOption(data) {
+      return data.keys().hasAll([
+        'label', 'note', 'price', 'currency', 'available', 'order', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'label', 'note', 'price', 'currency', 'available', 'order', 'updatedAt'
+      ]) &&
+      isNonEmptyStr(data.label, 100) &&
+      isOptStr(data.note, 120) &&
+      data.price is number && data.price >= 0 &&
+      isNonEmptyStr(data.currency, 10) &&
+      data.available is bool &&
+      data.order is number && data.order >= 0 && data.order <= 1000 &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidFaqItem(data) {
+      return data.keys().hasAll([
+        'question', 'answer', 'order', 'active', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'question', 'answer', 'order', 'active', 'updatedAt'
+      ]) &&
+      isNonEmptyStr(data.question, 240) &&
+      isNonEmptyStr(data.answer, 2000) &&
+      data.order is number && data.order >= 0 && data.order <= 1000 &&
+      data.active is bool &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidProgrammeItem(data) {
+      return data.keys().hasAll([
+        'title', 'description', 'link_label', 'link_href', 'icon_key', 'order', 'active', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'title', 'description', 'link_label', 'link_href', 'icon_key', 'order', 'active', 'updatedAt'
+      ]) &&
+      isNonEmptyStr(data.title, 120) &&
+      isOptStr(data.description, 400) &&
+      isNonEmptyStr(data.link_label, 60) &&
+      isNonEmptyStr(data.link_href, 200) &&
+      data.icon_key in ['qurbani', 'food', 'water', 'community', 'children'] &&
+      data.order is number && data.order >= 0 && data.order <= 1000 &&
+      data.active is bool &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidDonationTier(data) {
+      return data.keys().hasAll([
+        'amount', 'currency', 'title', 'description', 'order', 'active', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'amount', 'currency', 'title', 'description', 'order', 'active', 'updatedAt'
+      ]) &&
+      data.amount is number && data.amount >= 3 &&
+      isNonEmptyStr(data.currency, 10) &&
+      isNonEmptyStr(data.title, 100) &&
+      isOptStr(data.description, 300) &&
+      data.order is number && data.order >= 0 && data.order <= 1000 &&
+      data.active is bool &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidContactInquiry(data) {
+      return data.keys().hasAll([
+        'name', 'contact_value', 'subject', 'message', 'age_consent', 'status', 'createdAt', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'name', 'contact_value', 'subject', 'message', 'age_consent', 'status', 'createdAt', 'updatedAt'
+      ]) &&
+      isNonEmptyStr(data.name, 120) &&
+      isNonEmptyStr(data.contact_value, 160) &&
+      isNonEmptyStr(data.subject, 160) &&
+      isNonEmptyStr(data.message, 2000) &&
+      data.age_consent is bool &&
+      data.status in ['new', 'reviewed', 'resolved'] &&
+      data.createdAt is timestamp &&
+      data.updatedAt is timestamp;
+    }
+
+    function isValidDataDeletionRequest(data) {
+      return data.keys().hasAll([
+        'requester_name', 'contact_info', 'request_type', 'age_consent', 'status', 'createdAt', 'updatedAt'
+      ]) && data.keys().hasOnly([
+        'requester_name', 'contact_info', 'request_type', 'details', 'age_consent', 'status', 'createdAt', 'updatedAt'
+      ]) &&
+      isNonEmptyStr(data.requester_name, 120) &&
+      isNonEmptyStr(data.contact_info, 160) &&
+      data.request_type in ['delete_all', 'delete_inquiry', 'access_copy'] &&
+      (!('details' in data) || isOptStr(data.details, 1000)) &&
+      data.age_consent is bool &&
+      data.status in ['pending', 'completed'] &&
+      data.createdAt is timestamp &&
+      data.updatedAt is timestamp;
+    }
+
+    function isValidAdminUser(data) {
+      return data.keys().hasAll(['email', 'createdAt']) &&
+      data.keys().hasOnly(['email', 'display_name', 'added_by', 'createdAt']) &&
+      isNonEmptyStr(data.email, 160) &&
+      (!('display_name' in data) || isOptStr(data.display_name, 120)) &&
+      (!('added_by' in data) || isOptStr(data.added_by, 128)) &&
+      data.createdAt == request.time;
+    }
+
+    // -----------------------------------------------------------------
+    // Collection Rules
+    // -----------------------------------------------------------------
+
+    // Connection validation probe
+    match /test/{docId} {
+      allow get: if isValidId(docId);
+    }
+
+    // Global Site Settings
+    match /site_content/settings {
+      allow get: if true;
+      allow create, update: if isAdmin() && isValidSiteSettings(incoming());
+      allow delete: if false;
+    }
+
+    match /site_content/legal {
+      allow get: if true;
+      allow create, update: if isAdmin() && isValidLegalSettings(incoming());
+      allow delete: if false;
+    }
+
+    match /site_content/stats {
+      allow get: if true;
+      allow create, update: if isAdmin() && isValidImpactStats(incoming());
+      allow delete: if false;
+    }
+
+    match /site_content/images {
+      allow get: if true;
+      allow create, update: if isAdmin() && isValidSiteImages(incoming());
+      allow delete: if false;
+    }
+
+    match /hero_slides/{slideId} {
+      allow get: if isValidId(slideId);
+      allow list: if true;
+      allow create, update: if isAdmin() && isValidId(slideId) && isValidHeroSlide(incoming());
+      allow delete: if isAdmin() && isValidId(slideId);
+    }
+
+    match /campaigns/{campaignId} {
+      allow get: if isValidId(campaignId);
+      allow list: if true;
+      allow create, update: if isAdmin() && isValidId(campaignId) && isValidCampaign(incoming());
+      allow delete: if isAdmin() && isValidId(campaignId);
+    }
+
+    match /stories/{storyId} {
+      allow get: if isValidId(storyId);
+      allow list: if true;
+      allow create, update: if isAdmin() && isValidId(storyId) && isValidStory(incoming());
+      allow delete: if isAdmin() && isValidId(storyId);
+    }
+
+    match /media/{mediaId} {
+      allow get: if isValidId(mediaId);
+      allow list: if true;
+      allow create, update: if isAdmin() && isValidId(mediaId) && isValidMediaItem(incoming());
+      allow delete: if isAdmin() && isValidId(mediaId);
+    }
+
+    match /qurbani_options/{optionId} {
+      allow get: if isValidId(optionId);
+      allow list: if true;
+      allow create, update: if isAdmin() && isValidId(optionId) && isValidQurbaniOption(incoming());
+      allow delete: if isAdmin() && isValidId(optionId);
+    }
+
+    match /faqs/{faqId} {
+      allow get: if isValidId(faqId);
+      allow list: if true;
+      allow create, update: if isAdmin() && isValidId(faqId) && isValidFaqItem(incoming());
+      allow delete: if isAdmin() && isValidId(faqId);
+    }
+
+    match /programmes/{programmeId} {
+      allow get: if isValidId(programmeId);
+      allow list: if true;
+      allow create, update: if isAdmin() && isValidId(programmeId) && isValidProgrammeItem(incoming());
+      allow delete: if isAdmin() && isValidId(programmeId);
+    }
+
+    match /donation_tiers/{tierId} {
+      allow get: if isValidId(tierId);
+      allow list: if true;
+      allow create, update: if isAdmin() && isValidId(tierId) && isValidDonationTier(incoming());
+      allow delete: if isAdmin() && isValidId(tierId);
+    }
+
+    // PII-Protected Public Submission Collections
+    match /contact_inquiries/{inquiryId} {
+      allow get: if isAdmin() && isValidId(inquiryId);
+      allow list: if isAdmin();
+      allow create: if isValidId(inquiryId) &&
+        isValidContactInquiry(incoming()) &&
+        incoming().age_consent == true &&
+        incoming().status == 'new' &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isAdmin() &&
+        isValidId(inquiryId) &&
+        isValidContactInquiry(incoming()) &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']);
+      allow delete: if isAdmin() && isValidId(inquiryId);
+    }
+
+    match /data_deletion_requests/{requestId} {
+      allow get: if isAdmin() && isValidId(requestId);
+      allow list: if isAdmin();
+      allow create: if isValidId(requestId) &&
+        isValidDataDeletionRequest(incoming()) &&
+        incoming().age_consent == true &&
+        incoming().status == 'pending' &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isAdmin() &&
+        isValidId(requestId) &&
+        isValidDataDeletionRequest(incoming()) &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']);
+      allow delete: if isAdmin() && isValidId(requestId);
+    }
+
+    // Admin Users Collection
+    match /admins/{uid} {
+      allow get: if isAdmin() && isValidId(uid);
+      allow list: if isAdmin();
+      allow create: if isAdmin() && isValidId(uid) && isValidAdminUser(incoming());
+      allow delete: if isAdmin() && isValidId(uid);
+    }
+  }
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donate — Mustaqiim Relief and Charity Foundation</title>
+  <meta name="description" content="Support families and children in Uganda from US$3. Coordinate your charitable donation directly with Mustaqiim Relief and Charity Foundation.">
+  <meta name="robots" content="index, follow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main-content">
+    <section class="inner-hero bg-band">
+      <div class="bg-band-media">
+        <img data-site-image="inner_hero_donate" src="/src/assets/images/uganda_children_education_1795096380910.jpg" alt="Ugandan children smiling in school receiving learning supplies from volunteers." loading="eager">
+      </div>
+      <div class="bg-band-scrim" aria-hidden="true"></div>
+      <div class="container bg-band-content">
+        <p class="eyebrow">Give with confidence</p>
+        <h1 class="inner-hero-title">Your contribution supports families and children directly</h1>
+        <p class="inner-hero-text">
+          Direct card checkout is not yet enabled on this site. Every contribution is coordinated directly with our Kampala team for full accountability.
+        </p>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="donate-layout">
+        <div>
+          <form class="donation-form" id="donation-form" onsubmit="return false;">
+            <label class="form-label">Choose an amount (USD)</label>
+            <div class="form-chips" role="group" aria-label="Preset donation amounts">
+              <button type="button" class="form-chip" data-amount="3">$3</button>
+              <button type="button" class="form-chip" data-amount="5">$5</button>
+              <button type="button" class="form-chip form-chip-active" data-amount="10">$10</button>
+              <button type="button" class="form-chip" data-amount="25">$25</button>
+              <button type="button" class="form-chip" data-amount="50">$50</button>
+              <button type="button" class="form-chip" data-amount="100">$100</button>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="custom-amount">Or enter a custom amount (Minimum US$3)</label>
+              <input id="custom-amount" type="number" min="3" placeholder="Minimum 3" class="form-input">
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="campaign-select">Designate Campaign</label>
+              <select id="campaign-select" class="form-select"></select>
+            </div>
+
+            <div class="form-summary">
+              <span>Selected contribution</span>
+              <span class="form-summary-value" id="summary-value">USD 10</span>
+            </div>
+
+            <div class="consent-row">
+              <input type="checkbox" id="donate-age-consent" checked>
+              <label for="donate-age-consent">
+                <strong>Age &amp; Parental Consent:</strong> I confirm that I am 18 years of age or older, or have verifiable permission from a parent or legal guardian to coordinate a charitable contribution, and agree to the <a href="donation-policy.html" style="text-decoration:underline; color:var(--forest);">Donation Policy</a> and <a href="refund-policy.html" style="text-decoration:underline; color:var(--forest);">Refund Policy</a>.
+              </label>
+            </div>
+
+            <p class="form-error" id="donation-error" style="display:none" role="alert">Minimum donation is US$3.</p>
+
+            <a href="#" id="donation-submit" target="_blank" rel="noreferrer noopener" class="btn btn-primary full-width">
+              Continue on WhatsApp
+            </a>
+
+            <p style="font-size:13px; color:var(--muted); margin-top:14px; text-align:center;">
+              We collect zero card details on this page. Coordination takes place directly with our team.
+            </p>
+          </form>
+        </div>
+
+        <aside class="side-panel">
+          <h3>Minimum Contribution</h3>
+          <p>The minimum contribution is US$3 or its equivalent in Ugandan Shillings or another accepted currency.</p>
+          <h3>How Donations Are Handled</h3>
+          <p>Until integrated card and mobile money checkout is launched, our Kampala team confirms transfer instructions and records your programme designation directly.</p>
+          <h3>Policies &amp; Rights</h3>
+          <p>Review our <a href="refund-policy.html" style="text-decoration:underline; color:var(--forest);">Refund Policy</a>, <a href="privacy-policy.html" style="text-decoration:underline; color:var(--forest);">Privacy Policy</a>, and <a href="terms.html" style="text-decoration:underline; color:var(--forest);">Terms of Service</a>.</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script type="module" src="/js/scripts.js"></script>
+</body>
+</html>

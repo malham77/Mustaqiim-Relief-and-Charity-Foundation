@@ -1,0 +1,6 @@
+{
+  "name": "Mustaqiim Relief and Charity Foundation",
+  "description": "Humanitarian relief, Qurbani, food security, and clean water programmes serving communities in Nsambya, Kampala, and across Uganda.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Deletion &amp; Privacy Request — Mustaqiim Relief and Charity Foundation</title>
+  <meta name="description" content="Request permanent deletion or access to any personal contact records held by Mustaqiim Relief and Charity Foundation.">
+  <meta name="robots" content="index, follow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main-content">
+    <section class="container">
+      <div style="max-width: 780px; margin: 0 auto; padding: 56px 0;">
+        <header style="margin-bottom: 32px;">
+          <p class="eyebrow">Your Privacy Rights</p>
+          <h1 class="page-title">Request Data Deletion or Access</h1>
+          <p class="page-lead">
+            Last updated: <span data-legal-field="data_deletion_updated">November 2026</span>. You may request permanent erasure of your inquiry records or export of data held by Mustaqiim Relief and Charity Foundation.
+          </p>
+        </header>
+
+        <div class="side-panel" style="margin-bottom: 28px;">
+          <h2 style="font-size:1.15rem; margin-bottom:8px;">Clear Local Browser Data Immediately</h2>
+          <p>Click below to immediately erase any cookie preference keys stored in your current web browser.</p>
+          <button type="button" id="clear-local-storage-btn" class="btn btn-outline">Clear Local Browser Preferences</button>
+          <p id="local-clear-msg" class="form-success" style="display:none; margin-top:12px;" role="status"></p>
+        </div>
+
+        <form id="deletion-form" class="contact-form-card" novalidate>
+          <h2 style="font-size:1.25rem; margin-bottom:10px;">Submit a Database Erasure / Access Request</h2>
+          <p style="font-size:14px; color:var(--muted); margin-bottom:18px;">
+            We collect only the details needed to locate your records and verify the request. Verified deletion requests are completed within 14 business days.
+          </p>
+
+          <div class="form-field">
+            <label class="form-label" for="del-name">Full Name (Required)</label>
+            <input class="form-input" id="del-name" type="text" maxlength="120" required>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="del-contact">Phone Number or Email Previously Used (Required)</label>
+            <input class="form-input" id="del-contact" type="text" maxlength="160" required placeholder="+256... or name@example.com">
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="del-type">Request Type</label>
+            <select class="form-select" id="del-type">
+              <option value="delete_all">Delete all personal records associated with me</option>
+              <option value="delete_inquiry">Delete my contact inquiry message</option>
+              <option value="access_copy">Provide a copy of records held</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="del-details">Additional Reference Details (Optional)</label>
+            <textarea class="form-textarea" id="del-details" maxlength="1000" placeholder="Optional reference ID or approximate inquiry date..."></textarea>
+          </div>
+
+          <div class="consent-row">
+            <input type="checkbox" id="del-age-consent" required>
+            <label for="del-age-consent">
+              <strong>Identity &amp; Age Confirmation:</strong> I confirm that I am 18 years of age or older (or the parent/legal guardian of the data subject) and authorized to submit this request.
+            </label>
+          </div>
+
+          <div class="form-error" id="deletion-error" style="display:none;" role="alert"></div>
+          <div class="form-success" id="deletion-success" style="display:none;" role="status"></div>
+
+          <button type="submit" id="deletion-submit-btn" class="btn btn-primary full-width">Submit Data Request</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script type="module" src="/js/scripts.js"></script>
+</body>
+</html>

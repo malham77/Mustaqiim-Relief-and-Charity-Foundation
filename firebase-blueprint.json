@@ -1,0 +1,342 @@
+{
+  "entities": {
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Global site, business, and contact settings for Mustaqiim Relief and Charity Foundation.",
+      "type": "object",
+      "properties": {
+        "organisation_name": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "tagline": { "type": "string", "maxLength": 240 },
+        "registration_number": { "type": "string", "maxLength": 120 },
+        "legal_status": { "type": "string", "maxLength": 160 },
+        "operational_hours": { "type": "string", "maxLength": 160 },
+        "address_line": { "type": "string", "maxLength": 240 },
+        "phone_display": { "type": "string", "maxLength": 40 },
+        "phone_international": { "type": "string", "maxLength": 30, "pattern": "^[0-9]{7,20}$" },
+        "whatsapp_message": { "type": "string", "maxLength": 300 },
+        "public_email": { "type": "string", "maxLength": 160 },
+        "facebook_url": { "type": "string", "maxLength": 300 },
+        "instagram_url": { "type": "string", "maxLength": 300 },
+        "map_lat": { "type": "number" },
+        "map_lng": { "type": "number" },
+        "map_label": { "type": "string", "maxLength": 160 },
+        "map_description": { "type": "string", "maxLength": 300 },
+        "announcement_text": { "type": "string", "maxLength": 240 },
+        "footer_mission": { "type": "string", "maxLength": 400 },
+        "commitment_quote": { "type": "string", "maxLength": 500 },
+        "commitment_author": { "type": "string", "maxLength": 160 },
+        "commitment_role": { "type": "string", "maxLength": 160 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["organisation_name", "phone_display", "phone_international", "map_label", "updatedAt"]
+    },
+    "LegalSettings": {
+      "title": "LegalSettings",
+      "description": "Effective dates and editable legal contact notices across policy pages.",
+      "type": "object",
+      "properties": {
+        "privacy_updated": { "type": "string", "maxLength": 80 },
+        "terms_updated": { "type": "string", "maxLength": 80 },
+        "refund_updated": { "type": "string", "maxLength": 80 },
+        "cookie_updated": { "type": "string", "maxLength": 80 },
+        "donation_policy_updated": { "type": "string", "maxLength": 80 },
+        "data_deletion_updated": { "type": "string", "maxLength": 80 },
+        "privacy_contact_note": { "type": "string", "maxLength": 400 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["privacy_updated", "terms_updated", "refund_updated", "cookie_updated", "updatedAt"]
+    },
+    "ImpactStats": {
+      "title": "ImpactStats",
+      "description": "Verified impact figures and note displayed on the homepage.",
+      "type": "object",
+      "properties": {
+        "section_note": { "type": "string", "maxLength": 300 },
+        "items": { "type": "array", "description": "Bounded list up to 6 stat objects" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["section_note", "items", "updatedAt"]
+    },
+    "SiteImages": {
+      "title": "SiteImages",
+      "description": "Live-editable background images, section banners, and inner page hero visuals with descriptive alt text.",
+      "type": "object",
+      "properties": {
+        "about_side_image_url": { "type": "string", "maxLength": 500 },
+        "about_side_image_alt": { "type": "string", "maxLength": 240 },
+        "child_support_bg_url": { "type": "string", "maxLength": 500 },
+        "child_support_bg_alt": { "type": "string", "maxLength": 240 },
+        "child_support_card1_url": { "type": "string", "maxLength": 500 },
+        "child_support_card1_alt": { "type": "string", "maxLength": 240 },
+        "child_support_card2_url": { "type": "string", "maxLength": 500 },
+        "child_support_card2_alt": { "type": "string", "maxLength": 240 },
+        "qurbani_promo_bg_url": { "type": "string", "maxLength": 500 },
+        "qurbani_promo_bg_alt": { "type": "string", "maxLength": 240 },
+        "qurbani_promo_feature_url": { "type": "string", "maxLength": 500 },
+        "qurbani_promo_feature_alt": { "type": "string", "maxLength": 240 },
+        "quote_bg_url": { "type": "string", "maxLength": 500 },
+        "quote_bg_alt": { "type": "string", "maxLength": 240 },
+        "cta_bg_url": { "type": "string", "maxLength": 500 },
+        "cta_bg_alt": { "type": "string", "maxLength": 240 },
+        "inner_hero_about_url": { "type": "string", "maxLength": 500 },
+        "inner_hero_about_alt": { "type": "string", "maxLength": 240 },
+        "inner_hero_qurbani_url": { "type": "string", "maxLength": 500 },
+        "inner_hero_qurbani_alt": { "type": "string", "maxLength": 240 },
+        "inner_hero_donate_url": { "type": "string", "maxLength": 500 },
+        "inner_hero_donate_alt": { "type": "string", "maxLength": 240 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "about_side_image_url",
+        "child_support_bg_url",
+        "qurbani_promo_bg_url",
+        "quote_bg_url",
+        "cta_bg_url",
+        "updatedAt"
+      ]
+    },
+    "HeroSlide": {
+      "title": "HeroSlide",
+      "description": "Rotating homepage hero slide with image, alt text, copy, and CTAs.",
+      "type": "object",
+      "properties": {
+        "eyebrow": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "subtitle": { "type": "string", "maxLength": 400 },
+        "primary_cta_label": { "type": "string", "maxLength": 60 },
+        "primary_cta_href": { "type": "string", "maxLength": 200 },
+        "secondary_cta_label": { "type": "string", "maxLength": 60 },
+        "secondary_cta_href": { "type": "string", "maxLength": 200 },
+        "image_url": { "type": "string", "maxLength": 500 },
+        "image_alt": { "type": "string", "minLength": 5, "maxLength": 240 },
+        "order": { "type": "number" },
+        "active": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "subtitle", "image_url", "image_alt", "order", "active", "updatedAt"]
+    },
+    "Campaign": {
+      "title": "Campaign",
+      "description": "Charitable relief campaign with progress tracking and alt text.",
+      "type": "object",
+      "properties": {
+        "slug": { "type": "string", "minLength": 2, "maxLength": 100, "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "summary": { "type": "string", "maxLength": 400 },
+        "description": { "type": "string", "maxLength": 4000 },
+        "image_url": { "type": "string", "maxLength": 500 },
+        "image_alt": { "type": "string", "maxLength": 240 },
+        "target_amount": { "type": "number" },
+        "raised_amount": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 10 },
+        "location": { "type": "string", "maxLength": 120 },
+        "active": { "type": "boolean" },
+        "order": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["slug", "title", "summary", "description", "target_amount", "raised_amount", "currency", "location", "active", "updatedAt"]
+    },
+    "Story": {
+      "title": "Story",
+      "description": "Field story or programme report.",
+      "type": "object",
+      "properties": {
+        "slug": { "type": "string", "minLength": 2, "maxLength": 100, "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 2, "maxLength": 180 },
+        "excerpt": { "type": "string", "maxLength": 400 },
+        "body": { "type": "string", "maxLength": 8000 },
+        "image_url": { "type": "string", "maxLength": 500 },
+        "image_alt": { "type": "string", "maxLength": 240 },
+        "published_at": { "type": "string", "maxLength": 60 },
+        "active": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["slug", "title", "excerpt", "body", "published_at", "active", "updatedAt"]
+    },
+    "MediaItem": {
+      "title": "MediaItem",
+      "description": "Gallery photograph or video record.",
+      "type": "object",
+      "properties": {
+        "slug": { "type": "string", "minLength": 2, "maxLength": 100, "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "caption": { "type": "string", "maxLength": 400 },
+        "media_type": { "type": "string", "enum": ["photo", "video"] },
+        "image_url": { "type": "string", "maxLength": 500 },
+        "video_url": { "type": "string", "maxLength": 500 },
+        "image_alt": { "type": "string", "maxLength": 240 },
+        "license_note": { "type": "string", "maxLength": 240 },
+        "featured": { "type": "boolean" },
+        "order": { "type": "number" },
+        "active": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["slug", "title", "media_type", "image_alt", "active", "updatedAt"]
+    },
+    "QurbaniOption": {
+      "title": "QurbaniOption",
+      "description": "Qurbani / Udhiya animal share option and pricing.",
+      "type": "object",
+      "properties": {
+        "label": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "note": { "type": "string", "maxLength": 120 },
+        "price": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 10 },
+        "available": { "type": "boolean" },
+        "order": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["label", "note", "price", "currency", "available", "order", "updatedAt"]
+    },
+    "FaqItem": {
+      "title": "FaqItem",
+      "description": "Frequently asked question and answer.",
+      "type": "object",
+      "properties": {
+        "question": { "type": "string", "minLength": 3, "maxLength": 240 },
+        "answer": { "type": "string", "minLength": 3, "maxLength": 2000 },
+        "order": { "type": "number" },
+        "active": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["question", "answer", "order", "active", "updatedAt"]
+    },
+    "ProgrammeItem": {
+      "title": "ProgrammeItem",
+      "description": "Core programme card displayed in What We Do.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 400 },
+        "link_label": { "type": "string", "maxLength": 60 },
+        "link_href": { "type": "string", "maxLength": 200 },
+        "icon_key": { "type": "string", "enum": ["qurbani", "food", "water", "community", "children"] },
+        "order": { "type": "number" },
+        "active": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "link_label", "link_href", "icon_key", "order", "active", "updatedAt"]
+    },
+    "DonationTier": {
+      "title": "DonationTier",
+      "description": "Illustrative giving tier card.",
+      "type": "object",
+      "properties": {
+        "amount": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 10 },
+        "title": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 300 },
+        "order": { "type": "number" },
+        "active": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["amount", "currency", "title", "description", "order", "active", "updatedAt"]
+    },
+    "ContactInquiry": {
+      "title": "ContactInquiry",
+      "description": "Minimal contact inquiry submitted with age consent.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "contact_value": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "subject": { "type": "string", "maxLength": 160 },
+        "message": { "type": "string", "minLength": 5, "maxLength": 2000 },
+        "age_consent": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["new", "reviewed", "resolved"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "contact_value", "subject", "message", "age_consent", "status", "createdAt", "updatedAt"]
+    },
+    "DataDeletionRequest": {
+      "title": "DataDeletionRequest",
+      "description": "User-submitted data deletion or access request.",
+      "type": "object",
+      "properties": {
+        "requester_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "contact_info": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "request_type": { "type": "string", "enum": ["delete_all", "delete_inquiry", "access_copy"] },
+        "details": { "type": "string", "maxLength": 1000 },
+        "age_consent": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["pending", "completed"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["requester_name", "contact_info", "request_type", "age_consent", "status", "createdAt", "updatedAt"]
+    },
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Authorized admin user record.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 160 },
+        "display_name": { "type": "string", "maxLength": 120 },
+        "added_by": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/site_content/settings": {
+      "schema": { "$ref": "#/entities/SiteSettings" },
+      "description": "Global site configuration and business details."
+    },
+    "/site_content/legal": {
+      "schema": { "$ref": "#/entities/LegalSettings" },
+      "description": "Legal document effective dates and contact notices."
+    },
+    "/site_content/stats": {
+      "schema": { "$ref": "#/entities/ImpactStats" },
+      "description": "Impact statistics block."
+    },
+    "/site_content/images": {
+      "schema": { "$ref": "#/entities/SiteImages" },
+      "description": "Editable section background images and page photography."
+    },
+    "/hero_slides/{slideId}": {
+      "schema": { "$ref": "#/entities/HeroSlide" },
+      "description": "Homepage rotating hero slides."
+    },
+    "/campaigns/{campaignId}": {
+      "schema": { "$ref": "#/entities/Campaign" },
+      "description": "Charitable campaigns."
+    },
+    "/stories/{storyId}": {
+      "schema": { "$ref": "#/entities/Story" },
+      "description": "Field stories."
+    },
+    "/media/{mediaId}": {
+      "schema": { "$ref": "#/entities/MediaItem" },
+      "description": "Gallery photos and videos."
+    },
+    "/qurbani_options/{optionId}": {
+      "schema": { "$ref": "#/entities/QurbaniOption" },
+      "description": "Qurbani / Udhiya options."
+    },
+    "/faqs/{faqId}": {
+      "schema": { "$ref": "#/entities/FaqItem" },
+      "description": "Frequently asked questions."
+    },
+    "/programmes/{programmeId}": {
+      "schema": { "$ref": "#/entities/ProgrammeItem" },
+      "description": "What We Do programme cards."
+    },
+    "/donation_tiers/{tierId}": {
+      "schema": { "$ref": "#/entities/DonationTier" },
+      "description": "Donation tier examples."
+    },
+    "/contact_inquiries/{inquiryId}": {
+      "schema": { "$ref": "#/entities/ContactInquiry" },
+      "description": "Public contact inquiries (PII restricted to admins)."
+    },
+    "/data_deletion_requests/{requestId}": {
+      "schema": { "$ref": "#/entities/DataDeletionRequest" },
+      "description": "User data deletion/access requests (PII restricted to admins)."
+    },
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Authorized admin UIDs."
+    }
+  }
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — Mustaqiim Relief and Charity Foundation</title>
+  <meta name="description" content="Contact Mustaqiim Relief and Charity Foundation in Nsambya, Kampala via WhatsApp or our minimal-data inquiry form.">
+  <meta name="robots" content="index, follow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main-content">
+    <section class="container">
+      <div style="padding: 56px 0;">
+        <header style="margin-bottom: 36px;">
+          <p class="eyebrow">Contact</p>
+          <h1 class="page-title">Talk to our Kampala team</h1>
+          <p class="page-lead">
+            Reach out for donations, Qurbani reservations, programme details, or governance enquiries. We collect only the essential details needed to respond to your message.
+          </p>
+        </header>
+
+        <div class="contact-grid">
+          <div class="contact-card">
+            <h2>WhatsApp (Fastest)</h2>
+            <p id="contact-wa-number">+256 708 684 223</p>
+            <a id="contact-wa-btn" href="https://wa.me/256708684223" target="_blank" rel="noreferrer noopener" class="btn btn-primary full-width">
+              Message on WhatsApp
+            </a>
+          </div>
+
+          <div class="contact-card">
+            <h2>Direct Email / Form</h2>
+            <p id="contact-email-box">Use the inquiry form below or message us on WhatsApp.</p>
+          </div>
+
+          <div class="contact-card">
+            <h2>Operational Office</h2>
+            <p id="contact-address-text" style="margin-bottom:6px;">Nsambya, Makindye Division, Kampala, Uganda</p>
+            <p id="contact-hours-text" style="font-size:13px;">Monday to Saturday, 08:30 – 17:30 EAT</p>
+            <a href="about.html" class="btn btn-outline full-width">View Map &amp; Business Details</a>
+          </div>
+        </div>
+
+        <div class="about-layout" style="padding: 0;">
+          <form id="contact-form" class="contact-form-card" novalidate>
+            <h2 style="font-size:1.35rem; margin-bottom:8px;">Send an Inquiry</h2>
+            <p style="font-size:14px; color:var(--muted); margin-bottom:20px;">We collect only your name, one preferred reply contact, and your message. Read our <a href="privacy-policy.html" style="text-decoration:underline; color:var(--forest);">Privacy Policy</a> or <a href="data-deletion.html" style="text-decoration:underline; color:var(--forest);">request data deletion</a> anytime.</p>
+
+            <div class="form-field">
+              <label class="form-label" for="contact-name">Full Name (Required)</label>
+              <input class="form-input" id="contact-name" type="text" maxlength="120" required autocomplete="name">
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="contact-value">Reply Phone Number or Email (Required)</label>
+              <input class="form-input" id="contact-value" type="text" maxlength="160" required placeholder="+256... or name@example.com">
+              <p class="form-hint">Needed solely so our team can respond to your inquiry.</p>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="contact-subject">Topic</label>
+              <select class="form-select" id="contact-subject">
+                <option value="General Inquiry">General Inquiry</option>
+                <option value="Qurbani 2026 Reservation">Qurbani 2026 Reservation</option>
+                <option value="Donation & Receipt Support">Donation &amp; Receipt Support</option>
+                <option value="Volunteer / Community Partnership">Volunteer / Community Partnership</option>
+                <option value="Refund or Policy Question">Refund or Policy Question</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="contact-message">Message (Required)</label>
+              <textarea class="form-textarea" id="contact-message" maxlength="2000" required placeholder="Write your message here..."></textarea>
+            </div>
+
+            <div class="consent-row">
+              <input type="checkbox" id="contact-age-consent" required>
+              <label for="contact-age-consent">
+                <strong>Age &amp; Parental Consent Confirmation:</strong> I confirm that I am 18 years of age or older, or that I have the verifiable consent of a parent or legal guardian to submit this inquiry.
+              </label>
+            </div>
+
+            <div class="form-error" id="contact-form-error" style="display:none;" role="alert"></div>
+            <div class="form-success" id="contact-form-success" style="display:none;" role="status"></div>
+
+            <button type="submit" id="contact-submit-btn" class="btn btn-primary full-width">Send Inquiry</button>
+          </form>
+
+          <aside class="side-panel">
+            <h3>Official Business Details</h3>
+            <dl class="business-details-dl" id="business-details-list"></dl>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script type="module" src="/js/scripts.js"></script>
+</body>
+</html>
