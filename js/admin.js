@@ -1,121 +1,134 @@
 // -----------------------------------------------------------------
 // ADMIN DASHBOARD CONTROLLER — Mustaqiim Relief and Charity Foundation
-// Full CMS editor connected to Cloud Firestore + Google Auth.
+// Standalone classic script connected to Cloud Firestore + Google Auth.
 // -----------------------------------------------------------------
 
-import { DEFAULT_DATA, LICENSED_IMAGE_PRESETS } from './data.js';
-import {
-  loadLiveSiteData,
-  signInAdminWithGoogle,
-  signOutAdmin,
-  watchAdminAuth,
-  checkIsAdmin,
-  saveSettingsDoc,
-  saveSiteImagesDoc,
-  saveLegalDoc,
-  saveStatsDoc,
-  upsertCollectionItem,
-  deleteCollectionItem,
-  listProtectedCollection,
-  updateRequestStatus,
-  addAdminRecord,
-  seedDatabaseDefaults
-} from './firebase-db.js';
+(function () {
+  "use strict";
 
-let SITE_DATA = structuredClone(DEFAULT_DATA);
-let CURRENT_USER = null;
-let ACTIVE_TAB = 'overview';
-let PROTECTED_DATA = {
-  contact_inquiries: [],
-  data_deletion_requests: [],
-  admins: []
-};
+  var DEFAULT_DATA = window.MQ_DEFAULT_DATA || {};
+  var LICENSED_IMAGE_PRESETS = window.MQ_LICENSED_IMAGE_PRESETS || [];
+  var DB = window.MQ_DB || {};
 
-function esc(str) {
-  return String(str == null ? '' : str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+  var loadLiveSiteData = DB.loadLiveSiteData;
+  var signInAdminWithGoogle = DB.signInAdminWithGoogle;
+  var signOutAdmin = DB.signOutAdmin;
+  var watchAdminAuth = DB.watchAdminAuth;
+  var checkIsAdmin = DB.checkIsAdmin;
+  var saveSettingsDoc = DB.saveSettingsDoc;
+  var saveSiteImagesDoc = DB.saveSiteImagesDoc;
+  var saveLegalDoc = DB.saveLegalDoc;
+  var saveStatsDoc = DB.saveStatsDoc;
+  var upsertCollectionItem = DB.upsertCollectionItem;
+  var deleteCollectionItem = DB.deleteCollectionItem;
+  var listProtectedCollection = DB.listProtectedCollection;
+  var updateRequestStatus = DB.updateRequestStatus;
+  var addAdminRecord = DB.addAdminRecord;
+  var seedDatabaseDefaults = DB.seedDatabaseDefaults;
 
-function showToast(msg, isError = false) {
-  const existing = document.getElementById('admin-toast');
-  if (existing) existing.remove();
-  const el = document.createElement('div');
-  el.id = 'admin-toast';
-  el.className = 'admin-toast' + (isError ? ' error' : '');
-  el.setAttribute('role', 'status');
-  el.textContent = msg;
-  document.body.appendChild(el);
-  setTimeout(() => {
-    if (el.parentNode) el.remove();
-  }, 4000);
-}
+  var SITE_DATA = structuredClone(DEFAULT_DATA);
+  var CURRENT_USER = null;
+  var ACTIVE_TAB = "overview";
+  var PROTECTED_DATA = {
+    contact_inquiries: [],
+    data_deletion_requests: [],
+    admins: []
+  };
 
-const SIDEBAR_GROUPS = [
-  {
-    label: 'Dashboard',
-    items: [
-      { id: 'overview', label: 'Overview' },
-      { id: 'settings', label: 'Site & Business Details' }
-    ]
-  },
-  {
-    label: 'Homepage & Content',
-    items: [
-      { id: 'hero', label: 'Hero Carousel Slides' },
-      { id: 'images', label: 'Backgrounds & Site Images' },
-      { id: 'programmes', label: 'Programmes & Impact Stats' },
-      { id: 'campaigns', label: 'Campaigns' },
-      { id: 'qurbani', label: 'Qurbani Options' },
-      { id: 'stories', label: 'Field Stories' },
-      { id: 'media', label: 'Media Gallery' },
-      { id: 'faqs', label: 'FAQs' },
-      { id: 'tiers', label: 'Donation Tiers' }
-    ]
-  },
-  {
-    label: 'Governance & Privacy',
-    items: [
-      { id: 'legal', label: 'Legal Policy Dates' },
-      { id: 'requests', label: 'Inquiries & Data Deletions' },
-      { id: 'admins', label: 'Admin Access' }
-    ]
+  function esc(str) {
+    return String(str == null ? "" : str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
-];
 
-function renderAuthGate(message = '', showSignOut = false) {
-  const root = document.getElementById('admin-root');
-  root.innerHTML =
-    '<main id="main-content" class="admin-auth-screen">' +
-      '<div class="admin-auth-card">' +
-        '<div class="logo-mark" style="margin:0 auto 16px; width:48px; height:48px; font-size:20px;">M</div>' +
-        '<h1>Mustaqiim Admin Dashboard</h1>' +
-        '<p>Sign in with your authorized administrator Google account to manage website content, campaigns, business details, and user data requests.</p>' +
-        (message ? '<div class="form-error" style="text-align:left;">' + esc(message) + '</div>' : '') +
-        '<div style="display:flex; flex-direction:column; gap:10px;">' +
-          '<button type="button" id="admin-google-login" class="btn btn-primary full-width">Sign in with Google</button>' +
-          (showSignOut ? '<button type="button" id="admin-gate-signout" class="btn btn-outline full-width">Sign Out Current Account</button>' : '') +
-          '<a href="index.html" class="btn btn-outline full-width">Return to Public Website</a>' +
-        '</div>' +
-      '</div>' +
-    '</main>';
+  function showToast(msg, isError) {
+    var existing = document.getElementById("admin-toast");
+    if (existing) existing.remove();
+    var el = document.createElement("div");
+    el.id = "admin-toast";
+    el.className = "admin-toast" + (isError ? " error" : "");
+    el.setAttribute("role", "status");
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function () {
+      if (el.parentNode) el.remove();
+    }, 4000);
+  }
 
-  document.getElementById('admin-google-login').addEventListener('click', async () => {
-    try {
-      await signInAdminWithGoogle();
-    } catch (err) {
-      showToast('Sign-in failed: ' + (err.message || err), true);
+  var SIDEBAR_GROUPS = [
+    {
+      label: "Dashboard",
+      items: [
+        { id: "overview", label: "Overview" },
+        { id: "settings", label: "Site & Business Details" }
+      ]
+    },
+    {
+      label: "Homepage & Content",
+      items: [
+        { id: "hero", label: "Hero Carousel Slides" },
+        { id: "images", label: "Backgrounds & Site Images" },
+        { id: "programmes", label: "Programmes & Impact Stats" },
+        { id: "campaigns", label: "Campaigns" },
+        { id: "qurbani", label: "Qurbani Options" },
+        { id: "stories", label: "Field Stories" },
+        { id: "media", label: "Media Gallery" },
+        { id: "faqs", label: "FAQs" },
+        { id: "tiers", label: "Donation Tiers" }
+      ]
+    },
+    {
+      label: "Governance & Privacy",
+      items: [
+        { id: "legal", label: "Legal Policy Dates" },
+        { id: "requests", label: "Inquiries & Data Deletions" },
+        { id: "admins", label: "Admin Access" }
+      ]
     }
-  });
+  ];
 
-  const signOutBtn = document.getElementById('admin-gate-signout');
-  if (signOutBtn) {
-    signOutBtn.addEventListener('click', () => signOutAdmin());
+  function renderAuthGate(message, showSignOut) {
+    var root = document.getElementById("admin-root");
+    var isLocalFile = typeof DB.isFileProtocol === "function" && DB.isFileProtocol();
+    var fileNoticeHtml = isLocalFile
+      ? '<div class="calc-note" style="text-align:left; margin-bottom:18px;">You are currently viewing this file directly via <strong>file://</strong>. Google Sign-In and live Cloud Firestore updates require opening the website over <strong>HTTP or HTTPS</strong> (such as your GitHub Pages link or live web domain).</div>'
+      : "";
+
+    root.innerHTML =
+      '<main id="main-content" class="admin-auth-screen">' +
+        '<div class="admin-auth-card">' +
+          '<div class="logo-mark" style="margin:0 auto 16px; width:48px; height:48px; font-size:20px;">M</div>' +
+          "<h1>Mustaqiim Admin Dashboard</h1>" +
+          "<p>Sign in with your authorized administrator Google account to manage website content, campaigns, business details, and user data requests.</p>" +
+          fileNoticeHtml +
+          (message ? '<div class="form-error" style="text-align:left;">' + esc(message) + "</div>" : "") +
+          '<div style="display:flex; flex-direction:column; gap:10px;">' +
+            (isLocalFile ? "" : '<button type="button" id="admin-google-login" class="btn btn-primary full-width">Sign in with Google</button>') +
+            (showSignOut ? '<button type="button" id="admin-gate-signout" class="btn btn-outline full-width">Sign Out Current Account</button>' : "") +
+            '<a href="index.html" class="btn btn-outline full-width">Return to Public Website</a>' +
+          "</div>" +
+        "</div>" +
+      "</main>";
+
+    var loginBtn = document.getElementById("admin-google-login");
+    if (loginBtn) {
+      loginBtn.addEventListener("click", async function () {
+        try {
+          await signInAdminWithGoogle();
+        } catch (err) {
+          showToast("Sign-in failed: " + (err.message || err), true);
+        }
+      });
+    }
+
+    var signOutBtn = document.getElementById("admin-gate-signout");
+    if (signOutBtn) {
+      signOutBtn.addEventListener("click", function () { signOutAdmin(); });
+    }
   }
-}
 
 async function refreshAllData() {
   SITE_DATA = await loadLiveSiteData();
@@ -1348,7 +1361,7 @@ function imagePickerFields(currentUrl, currentAlt) {
         '<label class="form-label" for="preset-img-select">Licensed Image Library Preset</label>' +
         '<select class="form-select" id="preset-img-select"><option value="">-- Choose a licensed image or enter custom URL below --</option>' + options + '</select>' +
       '</div>' +
-      fieldInput('image_url', 'Image URL (local /src/assets/images/... or HTTPS)', currentUrl, 500, true) +
+      fieldInput('image_url', 'Image URL (local src/assets/images/... or HTTPS)', currentUrl, 500, true) +
       fieldInput('image_alt', 'Descriptive Alt Text (Required for Accessibility & Google SEO)', currentAlt, 240, true) +
       '<div class="admin-img-preview"><img id="editor-img-preview" src="' + esc(currentUrl || '') + '" alt="' + esc(currentAlt || 'Image preview') + '"></div>' +
     '</div>'
@@ -1447,3 +1460,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDashboardShell();
   });
 });
+})();

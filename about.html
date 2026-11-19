@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -22,7 +22,7 @@
   <main id="main-content">
     <section class="inner-hero bg-band">
       <div class="bg-band-media">
-        <img data-site-image="inner_hero_about" src="/src/assets/images/uganda_children_care_books_1795096380777.jpg" alt="Ugandan children reading books in a community learning room in Nsambya." loading="eager">
+        <img data-site-image="inner_hero_about" src="src/assets/images/uganda_children_care_books_1795096380777.jpg" alt="Ugandan children reading books in a community learning room in Nsambya." loading="eager">
       </div>
       <div class="bg-band-scrim" aria-hidden="true"></div>
       <div class="container bg-band-content">
@@ -81,7 +81,7 @@
           <a href="contact.html" class="btn btn-primary full-width" style="margin-bottom:10px;">Contact Form</a>
           <a href="donate.html" class="btn btn-outline full-width">Make a Donation</a>
           <div class="img-frame" style="margin-top:20px; border-radius:12px; aspect-ratio:3/4;">
-            <img data-site-image="about_side_image" src="/src/assets/images/about_nsambya_outreach_1795094927735.jpg" alt="Coordinators reviewing relief distribution logs in Nsambya, Kampala." loading="lazy">
+            <img data-site-image="about_side_image" src="src/assets/images/about_nsambya_outreach_1795094927735.jpg" alt="Coordinators reviewing relief distribution logs in Nsambya, Kampala." loading="lazy">
           </div>
         </aside>
       </div>
@@ -108,6 +108,8 @@
 
   <div id="site-footer"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script type="module" src="/js/scripts.js"></script>
+  <script defer src="js/data.js"></script>
+  <script defer src="js/firebase-db.js"></script>
+  <script defer src="js/scripts.js"></script>
 </body>
 </html>

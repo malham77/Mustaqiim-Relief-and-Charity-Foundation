@@ -30,6 +30,7 @@ const input = Object.fromEntries(
 
 export default defineConfig(() => {
   return {
+    base: './',
     plugins: [
       {
         name: 'copy-unbundled-src-assets',
@@ -43,6 +44,11 @@ export default defineConfig(() => {
           const distAssets = path.resolve(distDir, 'src/assets');
           if (fs.existsSync(distDir) && fs.existsSync(srcAssets)) {
             fs.cpSync(srcAssets, distAssets, { recursive: true, force: true });
+          }
+          const jsSrc = path.resolve(__dirname, 'js');
+          const jsDist = path.resolve(distDir, 'js');
+          if (fs.existsSync(distDir) && fs.existsSync(jsSrc)) {
+            fs.cpSync(jsSrc, jsDist, { recursive: true, force: true });
           }
         },
       },
